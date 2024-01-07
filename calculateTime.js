@@ -1,29 +1,35 @@
 function calculateTime(deliveries) {
-    let totalMilisegundos = 0;
+
+    let tiempo = new Date(1970, 0, 1);
 
     for (const time of deliveries) {
-        const [hours, minutes, seconds] = time.split(':').map(Number);
-        totalMilisegundos += hours * 3600000 + minutes * 60000 + seconds * 1000;
+        tiempo.setHours(tiempo.getHours() + Number(time.substring(0, 2)));
+        tiempo.setMinutes(tiempo.getMinutes() + Number(time.substring(3, 5)));
+        tiempo.setSeconds(tiempo.getSeconds() + Number(time.substring(6, 8)));
     }
 
-    const baseMilisegundos = 7 * 3600000;
-    const diferenciaMilisegundos = totalMilisegundos - baseMilisegundos;
+    const h = tiempo.getHours() * 3600000
+    const m = tiempo.getMinutes() * 60000
+    const s = tiempo.getSeconds() * 1000;
+
+    let msDeliveries = h + m + s;
+
+    function milisegundosToTiempo(ms) {
+        let horas = Math.floor(ms / 3600000);
+        let minutos = Math.floor((ms % 3600000) / 60000);
+        let segundos = Math.floor((ms % 60000) / 1000);
     
-    function convertirMilisegundosATiempo(ms) {
-        const horas = Math.floor(ms / 3600000);
-        const minutos = Math.floor((ms % 3600000) / 60000);
-        const segundos = Math.floor((ms % 60000) / 1000);
+        let formatoHoras = horas.toString().padStart(2, '0');
+        let formatoMinutos = minutos.toString().padStart(2, '0');
+        let formatoSegundos = segundos.toString().padStart(2, '0');
     
-        return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+        return `${formatoHoras}:${formatoMinutos}:${formatoSegundos}`;
     }
 
-    const resultadoMilisegundos = Math.abs(diferenciaMilisegundos);
-    const resultadoTiempo = convertirMilisegundosATiempo(resultadoMilisegundos);
-    
-    if (diferenciaMilisegundos >= 0) {
-        return resultadoTiempo;
+    if(msDeliveries >= 25200000){
+        return milisegundosToTiempo(msDeliveries - 25200000);
     } else {
-        return '-' + resultadoTiempo;
+        return '-' + milisegundosToTiempo(25200000 - msDeliveries);
     }
 }
 
